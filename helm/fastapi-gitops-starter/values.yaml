@@ -12,12 +12,12 @@ image:
 
 registry:
   createImagePullSecret: true
-  secretName: image-pull-secret
+  secretName: image-pull-secret #pragma: allowlist secret
   server: ghcr.io
   token: ""
 
 imagePullSecrets:
-  - name: image-pull-secret
+  - name: image-pull-secret #pragma: allowlist secret
 
 nameOverride: ""
 fullnameOverride: ""
@@ -45,7 +45,7 @@ securityContext:
   allowPrivilegeEscalation: false
   capabilities:
     drop:
-    - ALL
+      - ALL
   readOnlyRootFilesystem: false
 
 service:
@@ -136,21 +136,21 @@ rollout:
     # Number of steps in the canary deployment
     steps:
       - setWeight: 20
-      - pause: {duration: 30s}
+      - pause: { duration: 30s }
       - setWeight: 40
-      - pause: {duration: 30s}
+      - pause: { duration: 30s }
       - setWeight: 60
-      - pause: {duration: 30s}
+      - pause: { duration: 30s }
       - setWeight: 80
-      - pause: {duration: 30s}
+      - pause: { duration: 30s }
     # Max surge and unavailable during rollout
     maxSurge: "25%"
     maxUnavailable: 0
   # Blue-Green strategy configuration
   blueGreen:
     # Service names for blue-green deployment
-    activeService: ""  # Will default to the main service name if empty
-    previewService: ""  # Will default to chart fullname with "-preview" suffix if empty
+    activeService: "" # Will default to the main service name if empty
+    previewService: "" # Will default to chart fullname with "-preview" suffix if empty
     # Auto promotion configuration
     autoPromotionEnabled: true
     autoPromotionSeconds: 30
@@ -184,39 +184,39 @@ rollout:
       script: ""
     # Prometheus configuration (required when analysis is enabled)
     prometheus:
-      address: ""  # Prometheus server address, e.g., "http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090"
+      address: "" # Prometheus server address, e.g., "http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090"
     # Metric definitions for analysis
     metrics:
       # Success rate metric (measures percentage of non-5xx responses)
       successRate:
         enabled: false
-        interval: "1m"  # How often to check the metric
-        count: 5  # Number of measurements to perform
-        successCondition: "result >= 0.95"  # 95% success rate threshold
-        failureLimit: 3  # Number of failed measurements before marking as failed
-        timeRange: "5m"  # Prometheus query time range
-        initialDelay: "30s"  # Wait time before starting measurements
-        query: ""  # Custom Prometheus query (optional, overrides default)
+        interval: "1m" # How often to check the metric
+        count: 5 # Number of measurements to perform
+        successCondition: "result >= 0.95" # 95% success rate threshold
+        failureLimit: 3 # Number of failed measurements before marking as failed
+        timeRange: "5m" # Prometheus query time range
+        initialDelay: "30s" # Wait time before starting measurements
+        query: "" # Custom Prometheus query (optional, overrides default)
       # Response time metric (measures 95th percentile response time)
       responseTime:
         enabled: false
         interval: "1m"
         count: 5
-        successCondition: "result <= 1.0"  # Max 1 second response time
+        successCondition: "result <= 1.0" # Max 1 second response time
         failureLimit: 3
         timeRange: "5m"
         initialDelay: "30s"
-        query: ""  # Custom Prometheus query (optional, overrides default)
+        query: "" # Custom Prometheus query (optional, overrides default)
       # Error rate metric (measures percentage of 5xx responses)
       errorRate:
         enabled: false
         interval: "1m"
         count: 5
-        successCondition: "result <= 0.05"  # Max 5% error rate
+        successCondition: "result <= 0.05" # Max 5% error rate
         failureLimit: 3
         timeRange: "5m"
         initialDelay: "30s"
-        query: ""  # Custom Prometheus query (optional, overrides default)
+        query: "" # Custom Prometheus query (optional, overrides default)
       # Custom metrics (add your own metrics here)
       custom: {}
         # Example custom metric:

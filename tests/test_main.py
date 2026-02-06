@@ -41,3 +41,20 @@ def test_get_item():
     assert data["id"] == 5
     assert data["name"] == "Item 5"
     assert "item number 5" in data["description"]
+
+
+def test_create_item():
+    """Test the create item endpoint."""
+    response = client.post("/api/items?name=New Item&description=A new item")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == 999
+    assert data["name"] == "New Item"
+    assert data["description"] == "A new item"
+    assert data["created"] is True
+
+
+def test_create_item_missing_params():
+    """Test create item endpoint with missing parameters."""
+    response = client.post("/api/items")
+    assert response.status_code == 422
