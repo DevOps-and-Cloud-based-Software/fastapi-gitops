@@ -4,9 +4,10 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
-def calc_triangle_number(n)
-{
-    return  (n * (n + 1)) / 2
+def calc_triangle_number(n) {
+    number = (n * (n + 1)) / 2
+    print(number)
+    return number
 }
 
 app = FastAPI(
