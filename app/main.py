@@ -4,6 +4,11 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
+def calc_triangle_number(n)
+{
+    return  (n * (n + 1)) / 2
+}
+
 app = FastAPI(
     title="FastAPI GitOps Starter",
     description="A starter template for learning GitOps with FastAPI",
