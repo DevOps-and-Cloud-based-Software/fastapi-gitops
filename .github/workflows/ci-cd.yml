@@ -79,7 +79,7 @@ jobs:
           fi
       - name: Build Docker image
         run: |
-          docker build -t $REGISTRY/$IMAGE_NAME:${{ steps.vars.outputs.VERSION }} .
+          docker build -f docker/Dockerfile -t $REGISTRY/$IMAGE_NAME:${{ steps.vars.outputs.VERSION }} .
       - name: Push Docker image (release only)
         if: github.event_name == 'release'
         run: |
