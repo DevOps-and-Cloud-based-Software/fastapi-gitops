@@ -3,3 +3,19 @@ repos:
     rev: v5.0.0
     hooks:
       - id: trailing-whitespace
+      - id: check-added-large-files
+      - id: check-yaml
+        exclude: ^helm/fastapi-gitops-starter/templates
+  - repo: https://github.com/ibm/detect-secrets
+    rev: master
+    hooks:
+      - id: detect-secrets
+        args: [--baseline, .secrets.baseline, --use-all-plugins]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.15.4
+    hooks:
+      # Run the linter.
+      - id: ruff-check
+      # Run the formatter.
+      - id: ruff-format
