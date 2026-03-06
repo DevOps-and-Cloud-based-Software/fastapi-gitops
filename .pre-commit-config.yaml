@@ -3,3 +3,45 @@ repos:
     rev: v5.0.0
     hooks:
       - id: trailing-whitespace
+
+      # large files
+      - id: check-added-large-files
+        args: ["--maxkb=5000"]
+
+      # syntax validation
+      - id: check-yaml
+        exclude: ^helm/
+
+  # Python imports
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: ["--profile", "black"]
+
+  # Code style
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+      - id: black
+
+  # Linting
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+
+  # Security checks for Python code
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.9
+    hooks:
+      - id: bandit
+        args: ["-r", "app", "-f", "json", "--exclude", "venv,.venv,helm"]
+        pass_filenames: false
+
+  # Detect secrets
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: []
