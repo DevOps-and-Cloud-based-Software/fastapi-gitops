@@ -19,6 +19,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Lint with Ruff
+        run: ruff check .
+
   test:
     name: Run Tests
     runs-on: ubuntu-latest
@@ -28,6 +34,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pytest pytest-cov
+          pip install -r requirements.txt # If you have one
+
+      - name: Run tests with coverage
+        run: |
+          pytest --cov=. --cov-fail-under=80
+
   build:
     name: Build Docker Image
     runs-on: ubuntu-latest
@@ -35,8 +55,31 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'release'
     permissions:
       contents: read
-      actions: read
       packages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=raw,value=latest,enable=${{ github.event_name == 'release' }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: ${{ github.event_name == 'release' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

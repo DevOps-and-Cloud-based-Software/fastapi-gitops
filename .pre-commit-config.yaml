@@ -3,3 +3,11 @@ repos:
     rev: v5.0.0
     hooks:
       - id: trailing-whitespace
+      - id: check-added-large-files
+        args: ['--maxkb=150']
+      - id: check-yaml
+        exclude: helm
+      - id: sort-pythom
+      - id: check-security
+      - id: detect-private-key
+      - id: check-style
