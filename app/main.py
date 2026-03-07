@@ -32,9 +32,9 @@ async def list_items():
     """Example endpoint to list items."""
     return {
         "items": [
-            {"id": 1, "name": "Item 1", "description": "First item"},
-            {"id": 2, "name": "Item 2", "description": "Second item"},
-            {"id": 3, "name": "Item 3", "description": "Third item"},
+            {"id": 1, "name": "Item 1", "description": "Firstly first item"},
+            {"id": 2, "name": "Item 2", "description": "Secondly second item"},
+            {"id": 3, "name": "Item 3", "description": "Thirdly third item"},
         ]
     }
 
