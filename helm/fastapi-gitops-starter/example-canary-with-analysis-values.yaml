@@ -13,7 +13,7 @@ image:
 
 registry:
   createImagePullSecret: true
-  secretName: image-pull-secret
+  secretName: image-pull-secret  # pragma: allowlist secret
   server: ghcr.io
   token: ""
 

@@ -1,0 +1,27 @@
+image:
+  repository: fastapi-gitops-starter
+  tag: "local"
+  pullPolicy: Never
+
+registry:
+  createImagePullSecret: false
+
+imagePullSecrets: []
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: minikube.test
+      paths:
+        - path: /GitOps-Starter
+          pathType: Prefix
+
+app:
+  rootPath: "/GitOps-Starter"
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 10
