@@ -1,10 +1,7 @@
 import os
-
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-##testing commit
-##making extra changes to test gitops pipeline
 
 app = FastAPI(
     title="FastAPI GitOps Starter",
