@@ -91,7 +91,10 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ steps.repo.outputs.repo }}/fastapi-gitops-starter:${{ steps.version.outputs.VERSION }} .
+          docker build \
+            -f docker/Dockerfile \
+            -t ghcr.io/${{ steps.repo.outputs.repo }}/fastapi-gitops-starter:${{ steps.version.outputs.VERSION }} \
+            .
 
       - name: Tag latest (release only)
         if: github.event_name == 'release'
