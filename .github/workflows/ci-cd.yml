@@ -2,12 +2,12 @@ name: CI/CD Pipeline
 
 on:
   release:
-    types: [ published ]
+    types: [published]
   push:
     branches:
-      - '**'
+      - "**"
     tags-ignore:
-      - '**'
+      - "**"
 
 jobs:
   lint:
@@ -18,7 +18,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install ruff
+      - name: Run Ruff
+        run: ruff check app/ tests/
   test:
     name: Run Tests
     runs-on: ubuntu-latest
@@ -27,6 +34,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run tests with coverage
+        run: pytest --cov=app --cov-fail-under=80
 
   build:
     name: Build Docker Image
@@ -40,3 +55,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Docker image
+        run: docker build -t ghcr.io/${{ github.repository }}:${{ github.sha }} -f docker/Dockerfile .
+      - name: Tag and push on release
+        if: github.event_name == 'release'
+        run: |
+          VERSION=${{ github.event.release.tag_name }}
+          docker tag ghcr.io/${{ github.repository }}:${{ github.sha }} ghcr.io/${{ github.repository }}:${VERSION}
+          docker tag ghcr.io/${{ github.repository }}:${{ github.sha }} ghcr.io/${{ github.repository }}:latest
+          docker push ghcr.io/${{ github.repository }}:${VERSION}
+          docker push ghcr.io/${{ github.repository }}:latest
