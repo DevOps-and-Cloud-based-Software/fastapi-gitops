@@ -41,3 +41,18 @@ def test_get_item():
     assert data["id"] == 5
     assert data["name"] == "Item 5"
     assert "item number 5" in data["description"]
+    "This is the end of test_main.py"
+
+def test_create_item():
+    """Test the creation of a new item."""
+    response = client.post(
+        "/api/items",
+        params={"name": "New Item", "description": "This is a test item"}
+    )
+    assert response.status_code == 200
+    assert response.json() == {
+        "id": 999,
+        "name": "New Item",
+        "description": "This is a test item",
+        "created": True
+    }
