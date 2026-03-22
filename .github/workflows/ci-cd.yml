@@ -19,6 +19,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Lint with Ruff
+        run: ruff check app tests
+
   test:
     name: Run Tests
     runs-on: ubuntu-latest
@@ -27,6 +33,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests with coverage
+        run: pytest --cov=app --cov-report=term --cov-fail-under=80
 
   build:
     name: Build Docker Image
@@ -40,3 +52,22 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t fastapi-gitops-starter .
+
+      - name: Log in to GitHub Container Registry
+        if: github.event_name == 'release'
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Tag Docker image
+        if: github.event_name == 'release'
+        run: |
+          docker tag fastapi-gitops-starter ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }}
+          docker tag fastapi-gitops-starter ghcr.io/${{ github.repository }}:latest
+
+      - name: Push Docker image
+        if: github.event_name == 'release'
+        run: |
+          docker push ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }}
+          docker push ghcr.io/${{ github.repository }}:latest
