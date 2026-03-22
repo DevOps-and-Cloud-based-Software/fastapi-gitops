@@ -10,14 +10,23 @@ on:
       - '**'
 
 jobs:
-  lint:
-    name: Lint Code
+  ci-pipeline:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with: {python-version: '3.11'}
+      - name: Install deps
+        run: pip install -r requirements.txt
+      - name: Lint
+        run: ruff check .
+      - name: Test & Coverage
+        run: |
+          pytest --cov=app --cov-fail-under=80  # Step 3.3: Fail if <80% [cite: 1518]
+      - name: Build Docker
+        if: success()
+        run: docker build -t fastapi-gitops .
 
   test:
     name: Run Tests
